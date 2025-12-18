@@ -60,7 +60,7 @@
         (map-set spending-history spending-id {
             recipient: recipient,
             amount: amount,
-            timestamp: block-height,
+            timestamp: stacks-block-height,
             proposal-id: proposal-id,
             description: description
         })
@@ -106,7 +106,7 @@
         (asserts! (> amount u0) err-invalid-amount)
         (asserts! (>= (get-balance) amount) err-insufficient-balance)
         
-        (try! (as-contract (stx-transfer? amount tx-sender recipient)))
+        (try! (stx-transfer? amount (as-contract tx-sender) recipient))
         (var-set total-withdrawn (+ (var-get total-withdrawn) amount))
         
         (print { 
@@ -131,7 +131,7 @@
 ;; Read-only functions
 
 (define-read-only (get-balance)
-    (stx-get-balance (as-contract tx-sender))
+    (stx-get-balance (var-get proposal-system-contract))
 )
 
 (define-read-only (get-total-deposited)

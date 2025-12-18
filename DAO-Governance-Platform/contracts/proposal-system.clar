@@ -60,8 +60,8 @@
 )
     (let (
         (proposal-id (+ (var-get proposal-count) u1))
-        (start-block block-height)
-        (end-block (+ block-height voting-period))
+        (start-block stacks-block-height)
+        (end-block (+ stacks-block-height voting-period))
     )
         (map-set proposals proposal-id {
             proposer: tx-sender,
@@ -90,7 +90,7 @@
     )
         ;; Validate voting conditions
         (asserts! (is-none (map-get? votes { proposal-id: proposal-id, voter: tx-sender })) err-already-voted)
-        (asserts! (< block-height (get end-block proposal)) err-voting-closed)
+        (asserts! (< stacks-block-height (get end-block proposal)) err-voting-closed)
         (asserts! (is-eq (get status proposal) status-active) err-voting-closed)
         (asserts! (> voter-power u0) err-insufficient-voting-power)
         
@@ -135,7 +135,7 @@
         (votes-for (get votes-for proposal))
         (votes-against (get votes-against proposal))
     )
-        (asserts! (>= block-height (get end-block proposal)) err-voting-still-active)
+        (asserts! (>= stacks-block-height (get end-block proposal)) err-voting-still-active)
         (asserts! (is-eq (get status proposal) status-active) err-voting-closed)
         
         ;; Check quorum and passing threshold
@@ -163,7 +163,7 @@
         (proposal (unwrap! (map-get? proposals proposal-id) err-proposal-not-found))
     )
         (asserts! (is-eq (get status proposal) status-passed) err-proposal-not-passed)
-        (asserts! (>= block-height (+ (get end-block proposal) (get execution-delay proposal))) err-voting-still-active)
+        (asserts! (>= stacks-block-height (+ (get end-block proposal) (get execution-delay proposal))) err-voting-still-active)
         
         (map-set proposals proposal-id (merge proposal { status: status-executed }))
         (print { event: "proposal-executed", proposal-id: proposal-id })
@@ -217,7 +217,7 @@
     (match (map-get? proposals proposal-id)
         proposal
             (ok (and 
-                (< block-height (get end-block proposal))
+                (< stacks-block-height (get end-block proposal))
                 (is-eq (get status proposal) status-active)
             ))
         err-proposal-not-found

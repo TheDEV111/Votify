@@ -113,34 +113,18 @@
 )
 
 (define-read-only (get-voting-power (user principal))
-    (let (
-        (direct-power (default-to u0 (map-get? voting-power user)))
-        (delegated-power (fold calculate-delegated-power (list) u0))
-    )
-        (ok (+ direct-power delegated-power))
-    )
+    (ok (default-to u0 (map-get? voting-power user)))
 )
 
-(define-private (calculate-delegated-power (item principal) (acc uint))
-    (match (map-get? delegations item)
-        delegate
-            (if (is-eq delegate tx-sender)
-                (+ acc (ft-get-balance governance-token item))
-                acc
-            )
-        acc
-    )
+(define-read-only (get-voting-power-at (user principal) (height uint))
+    (ok (default-to u0 (map-get? vote-snapshots { user: user, block: height })))
 )
 
-(define-read-only (get-voting-power-at (user principal) (block-height uint))
-    (ok (default-to u0 (map-get? vote-snapshots { user: user, block: block-height })))
-)
-
-(define-public (snapshot-voting-power (block-height uint))
+(define-public (snapshot-voting-power (height uint))
     (let (
         (power (unwrap-panic (get-voting-power tx-sender)))
     )
-        (map-set vote-snapshots { user: tx-sender, block: block-height } power)
+        (map-set vote-snapshots { user: tx-sender, block: height } power)
         (ok power)
     )
 )
