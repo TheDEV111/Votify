@@ -1,13 +1,21 @@
 [project]
 name = "DAO-Governance-Platform"
-description = ""
+description = "Decentralized Autonomous Organization with token-based voting"
 authors = []
 telemetry = true
 cache_dir = "./.cache"
 
-# [contracts.counter]
-# path = "contracts/counter.clar"
-# epoch = "latest"
+[contracts.governance-token]
+path = "contracts/governance-token.clar"
+epoch = "latest"
+
+[contracts.proposal-system]
+path = "contracts/proposal-system.clar"
+epoch = "latest"
+
+[contracts.treasury]
+path = "contracts/treasury.clar"
+epoch = "latest"
 
 [repl.analysis]
 passes = ["check_checker"]
