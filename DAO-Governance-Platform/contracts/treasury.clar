@@ -174,16 +174,3 @@
         spending-count: (var-get spending-count)
     })
 )
-
-;; Get allocation by proposal
-(define-read-only (get-proposal-allocation (proposal-id uint))
-    (let (
-        (allocation (fold sum-proposal-spending (list) u0))
-    )
-        (ok allocation)
-    )
-)
-
-(define-private (sum-proposal-spending (item uint) (acc uint))
-    acc
-)

@@ -1,0 +1,32 @@
+---
+id: 0
+name: Mainnet deployment
+network: mainnet
+stacks-node: "https://api.hiro.so"
+bitcoin-node: "http://blockstack:blockstacksystem@bitcoin.blockstack.com:8332"
+plan:
+  batches:
+    - id: 0
+      transactions:
+        - contract-publish:
+            contract-name: governance-token
+            expected-sender: SPVQ61FEWR6M4HVAT3BNE07D4BNW6A1C2ACCNQ6F
+            cost: 138438219
+            path: contracts/governance-token.clar
+            anchor-block-only: true
+            clarity-version: 4
+        - contract-publish:
+            contract-name: proposal-system
+            expected-sender: SPVQ61FEWR6M4HVAT3BNE07D4BNW6A1C2ACCNQ6F
+            cost: 138557916
+            path: contracts/proposal-system.clar
+            anchor-block-only: true
+            clarity-version: 4
+        - contract-publish:
+            contract-name: treasury
+            expected-sender: SPVQ61FEWR6M4HVAT3BNE07D4BNW6A1C2ACCNQ6F
+            cost: 138489518
+            path: contracts/treasury.clar
+            anchor-block-only: true
+            clarity-version: 4
+      epoch: "3.3"
