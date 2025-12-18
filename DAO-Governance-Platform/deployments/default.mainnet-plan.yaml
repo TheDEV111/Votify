@@ -11,21 +11,21 @@ plan:
         - contract-publish:
             contract-name: governance-token
             expected-sender: SPVQ61FEWR6M4HVAT3BNE07D4BNW6A1C2ACCNQ6F
-            cost: 138438219
+            cost: 38050
             path: contracts/governance-token.clar
             anchor-block-only: true
             clarity-version: 4
         - contract-publish:
             contract-name: proposal-system
             expected-sender: SPVQ61FEWR6M4HVAT3BNE07D4BNW6A1C2ACCNQ6F
-            cost: 138557916
+            cost: 83660
             path: contracts/proposal-system.clar
             anchor-block-only: true
             clarity-version: 4
         - contract-publish:
             contract-name: treasury
             expected-sender: SPVQ61FEWR6M4HVAT3BNE07D4BNW6A1C2ACCNQ6F
-            cost: 138489518
+            cost: 56810
             path: contracts/treasury.clar
             anchor-block-only: true
             clarity-version: 4
