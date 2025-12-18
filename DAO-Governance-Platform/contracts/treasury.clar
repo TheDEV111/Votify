@@ -14,6 +14,7 @@
 (define-data-var proposal-system-contract principal .proposal-system)
 (define-data-var total-deposited uint u0)
 (define-data-var total-withdrawn uint u0)
+(define-data-var treasury-balance uint u0)
 
 ;; Data maps
 (define-map authorized-proposals uint bool)
@@ -35,11 +36,12 @@
         (asserts! (> amount u0) err-invalid-amount)
         (try! (stx-transfer? amount tx-sender (as-contract tx-sender)))
         (var-set total-deposited (+ (var-get total-deposited) amount))
+        (var-set treasury-balance (+ (var-get treasury-balance) amount))
         (print { 
             event: "funds-deposited", 
             depositor: tx-sender, 
             amount: amount,
-            new-balance: (get-balance)
+            new-balance: (var-get treasury-balance)
         })
         (ok true)
     )
@@ -52,11 +54,12 @@
     )
         (asserts! (> amount u0) err-invalid-amount)
         (asserts! (is-authorized-proposal proposal-id) err-not-authorized)
-        (asserts! (>= (get-balance) amount) err-insufficient-balance)
+        (asserts! (>= (var-get treasury-balance) amount) err-insufficient-balance)
         
-        (try! (as-contract (stx-transfer? amount tx-sender recipient)))
+        (try! (stx-transfer? amount (as-contract tx-sender) recipient))
         
         (var-set total-withdrawn (+ (var-get total-withdrawn) amount))
+        (var-set treasury-balance (- (var-get treasury-balance) amount))
         (map-set spending-history spending-id {
             recipient: recipient,
             amount: amount,
@@ -104,10 +107,11 @@
     (begin
         (asserts! (is-eq tx-sender contract-owner) err-owner-only)
         (asserts! (> amount u0) err-invalid-amount)
-        (asserts! (>= (get-balance) amount) err-insufficient-balance)
+        (asserts! (>= (var-get treasury-balance) amount) err-insufficient-balance)
         
         (try! (stx-transfer? amount (as-contract tx-sender) recipient))
         (var-set total-withdrawn (+ (var-get total-withdrawn) amount))
+        (var-set treasury-balance (- (var-get treasury-balance) amount))
         
         (print { 
             event: "emergency-withdrawal", 
@@ -131,7 +135,7 @@
 ;; Read-only functions
 
 (define-read-only (get-balance)
-    (stx-get-balance (var-get proposal-system-contract))
+    (var-get treasury-balance)
 )
 
 (define-read-only (get-total-deposited)
@@ -168,7 +172,7 @@
 ;; Treasury statistics
 (define-read-only (get-treasury-stats)
     (ok {
-        current-balance: (get-balance),
+        current-balance: (var-get treasury-balance),
         total-deposited: (var-get total-deposited),
         total-withdrawn: (var-get total-withdrawn),
         spending-count: (var-get spending-count)
