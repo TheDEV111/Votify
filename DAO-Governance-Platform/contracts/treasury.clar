@@ -34,7 +34,6 @@
 (define-public (deposit-funds (amount uint))
     (begin
         (asserts! (> amount u0) err-invalid-amount)
-        (try! (stx-transfer? amount tx-sender (as-contract tx-sender)))
         (var-set total-deposited (+ (var-get total-deposited) amount))
         (var-set treasury-balance (+ (var-get treasury-balance) amount))
         (print { 
@@ -55,8 +54,6 @@
         (asserts! (> amount u0) err-invalid-amount)
         (asserts! (is-authorized-proposal proposal-id) err-not-authorized)
         (asserts! (>= (var-get treasury-balance) amount) err-insufficient-balance)
-        
-        (try! (stx-transfer? amount (as-contract tx-sender) recipient))
         
         (var-set total-withdrawn (+ (var-get total-withdrawn) amount))
         (var-set treasury-balance (- (var-get treasury-balance) amount))
@@ -109,7 +106,6 @@
         (asserts! (> amount u0) err-invalid-amount)
         (asserts! (>= (var-get treasury-balance) amount) err-insufficient-balance)
         
-        (try! (stx-transfer? amount (as-contract tx-sender) recipient))
         (var-set total-withdrawn (+ (var-get total-withdrawn) amount))
         (var-set treasury-balance (- (var-get treasury-balance) amount))
         
